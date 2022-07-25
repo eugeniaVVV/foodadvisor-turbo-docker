@@ -1,4 +1,4 @@
-# foodadvisor-turbo-docker - Containerized Turborepo for FoodAdvisor Strapi Starter
+# Containerized Turborepo for FoodAdvisor Strapi Starter
 
 **Turborepo boilerplate + docker-compose + Strapi foodadvisor starter (Strapi + Next.js).**
 
