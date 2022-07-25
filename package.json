@@ -1,0 +1,36 @@
+{
+  "name": "turbo-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "seed": "turbo run seed",
+    "dev": "turbo run dev --parallel & turbo run develop",
+    "dev:docker": "docker-compose up -d",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "test": "turbo run test"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.2.5",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "eslint-config-custom": "latest",
+    "prettier": "latest",
+    "turbo": "latest"
+  },
+  "engines": {
+    "npm": "6.14.13",
+    "node": "14.19.3"
+  },
+  "packageManager": "yarn@1.22.19",
+  "dependencies": {
+    "npm": "6.14.13"
+  }
+}

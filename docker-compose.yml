@@ -1,0 +1,42 @@
+version: "3.9"
+services:
+  db:
+    container_name: "${DATABASE_HOST:-turbo_db}"
+    image: postgres
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./apps/api/.env
+    volumes:
+      - turbo-db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - turbo-network
+      - default
+
+  #turborepo
+  turbo:
+    container_name: turbo_strapi_food
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    ports:
+      - "3000:3000"
+      - "1337:1337"
+    environment:
+      - STRAPI_VERSION="${STRAPI_VERSION:-4.2.0}"  # ensure package.json matches
+    volumes:
+      - ./:/app/
+      # Docker will create a volume from the path below
+      - /app/node_modules/
+    restart: on-failure
+    networks:
+      - turbo-network
+      - default
+
+volumes:
+  turbo-db-data:
+
+networks:
+  turbo-network:
+    driver: bridge

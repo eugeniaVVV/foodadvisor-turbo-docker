@@ -1,70 +1,91 @@
-# FoodAdvisor - Strapi Demo
+# foodadvisor-turbo-docker - Containerized Turborepo for FoodAdvisor Strapi Starter
 
-![FoodAdvisor](./foodadvisor.png)
+**Turborepo boilerplate + docker-compose + Strapi foodadvisor starter (Strapi + Next.js).**
 
-Welcome to FoodAdvisor, the official Strapi demo application.
-This repository contains the following:
+FoodAdvisor is the official Strapi demo app.
 
-- Strapi project with existing Content-types and data (`/api`)
-- Next.js client ready to fetch the content of the Strapi application (`/client`)
-
-[![Open in Gitpod](https://camo.githubusercontent.com/76e60919474807718793857d8eb615e7a50b18b04050577e5a35c19421f260a3/68747470733a2f2f676974706f642e696f2f627574746f6e2f6f70656e2d696e2d676974706f642e737667)](http://gitpod.io/#https://github.com/strapi/foodadvisor)
-
-## Get started
-
-You can get started with this project locally on your machine by following the instructions below or you can [request a private instance on our website](https://strapi.io/demo).
+- [Turborepo](https://turborepo.org)
+  - Turborepo uses [Yarn](https://classic.yarnpkg.com/lang/en/) as a package manager.
+- [Strapi foodadvisor](https://github.com/strapi/foodadvisor)
+  - Boilerplate /api/ with existing content-types and data extracted to sqlite3. (Postgres is commented out in api/config/database.js.)
+  - Boilerplate /client/ uses [Next.js](https://nextjs.org) to fetch the content from Strapi.
 
 ## Prerequisites
 
-Be sure to have the correct env variables for each part:
+Replace default variables in .env.example to .env: `cp apps/api/.env.example apps/api/.env` & `cp apps/client/.env.example apps/client/.env`
 
-- Strapi (example in `./api/.env.example`):
+- Strapi (example in `./apps/api/.env.example`):
   - `STRAPI_ADMIN_CLIENT_URL=<url-of-nextjs>`
   - `STRAPI_ADMIN_CLIENT_PREVIEW_SECRET=<a-random-token>`
 
-- Next.js (already in `./client/.env.development`):
+- Next.js (already in `./apps/client/.env.development`):
   - `NEXT_PUBLIC_API_URL=<url-of-strapi>`
   - `PREVIEW_SECRET=<the-same-random-token-as-for-strapi>`
 
-## 1. Clone FoodAdvisor
+Generate secure JWT tokens for apps/api/.env & apps/client/.env: `openssl rand 64 | base64`
 
-- Clone the repository by running the following command:
+If you update Strapi, make sure to update the `STRAPI_VERSION` in `./apps/api/.env` to the save version as `./apps/api/package.json`.
+
+## Develop
+
+To develop all apps and packages, run the following command:
+
+`docker-compose up -d`
+
+## Build
+
+To build all apps and packages, exec into the Docker container:
+`docker exec -it turbo_strapi_food /bin/bash` or `docker exec -it turbo_strapi_food bash`
+and build `yarn run build`
+
+## Turbo Packages
+Turborepo boilerplate includes the following packages:
+
+- `ui`: a stub React component library shared by both `web` and `docs` applications
+- `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
+- `tsconfig`: `tsconfig.json`s used throughout the monorepo
+
+### Utilities
+
+This turborepo has some additional tools already setup for you:
+
+- [TypeScript](https://www.typescriptlang.org/) for static type checking
+- [ESLint](https://eslint.org/) for code linting
+- [Jest](https://jestjs.io) test runner for all things JavaScript
+- [Prettier](https://prettier.io) for code formatting
+
+### Remote Caching
+
+Turborepo can use a technique known as [Remote Caching (Beta)](https://turborepo.org/docs/features/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+
+By default, Turborepo will cache locally. To enable Remote Caching (Beta) you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
 
 ```
-git clone https://github.com/strapi/foodadvisor.git
+cd turbo-docker-foodadvisor
+npx turbo login
 ```
+This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
 
-- Navigate to your project folder by running `cd foodadvisor`.
-
-## 2. Start Strapi
-
-Navigate to your `./my-projects/foodadvisor/api` folder by running `cd api` from your command line.
-
-- Run the following command in your `./foodadvisor/api` folder:
+Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your turborepo:
 
 ```
-yarn && yarn seed && yarn develop
+npx turbo link
 ```
 
-This will install the dependencies, fill your application with data and run your server. You can run these commands separately.
+## Useful Links
 
-## 3. Start Next.js
+Learn more about the power of Turborepo:
 
-Navigate to your `./my-projects/foodadvisor/client` folder by running `cd client` from your command line.
+- [Pipelines](https://turborepo.org/docs/core-concepts/pipelines)
+- [Caching](https://turborepo.org/docs/core-concepts/caching)
+- [Remote Caching (Beta)](https://turborepo.org/docs/core-concepts/remote-caching)
+- [Scoped Tasks](https://turborepo.org/docs/core-concepts/scopes)
+- [Configuration Options](https://turborepo.org/docs/reference/configuration)
+- [CLI Usage](https://turborepo.org/docs/reference/command-line-reference)
 
-- Run the following command in your `./foodadvisor/client` folder
-
-```
-yarn && yarn dev
-```
-
-This will install the dependencies, and run your server. You can run these commands separately.
-
-## Features overview
+## Strapi FoodAdvisor Features overview
 
 ### User
-
-<br />
 
 **An intuitive, minimal editor** The editor allows you to pull in dynamic blocks of content. It’s 100% open-source, and it’s fully extensible.<br />
 **Media Library** Upload images, video or any files and crop and optimize their sizes, without quality loss.<br />
@@ -75,14 +96,13 @@ This will install the dependencies, and run your server. You can run these comma
 
 ### Global
 
-<br />
-
 [Customizable API](https://strapi.io/features/customizable-api): Automatically build out the schema, models, controllers for your API from the editor. Get REST or GraphQL API out of the box without writing a single line of code.<br />
 [Media Library](https://strapi.io/features/media-library): The media library allows you to store your images, videos and files in your Strapi admin panel with many ways to visualize and manage them.<br />
 [Role-Based Access Control (RBAC)](https://strapi.io/features/custom-roles-and-permissions): Role-Based Access Control is a feature available in the Administration Panel settings that let your team members have access rights only to the information they need.<br />
 [Internationalization (i18n)](https://strapi.io/features/internationalization): Internationalization (i18n) lets you create many content versions, also called locales, in different languages and for different countries.<br />
 
+## Credits
 
-## Resources
-
-[Docs](https://docs.strapi.io) • [Demo](https://strapi.io/demo) • [Starters](https://strapi.io/starters) • [Forum](https://forum.strapi.io/) • [Discord](https://discord.strapi.io) • [Youtube](https://www.youtube.com/c/Strapi/featured) • [Try Enterprise Edition](https://strapi.io/enterprise) • [Strapi Design System](https://design-system.strapi.io/) • [Marketplace](https://market.strapi.io/)
+- [strapi/foodadvisor](https://github.com/strapi/foodadvisor)
+- [kevinadhiguna/strapi-dockerize](https://github.com/kevinadhiguna/strapi-dockerize)
+- [Elvincth/turbo-strapi-nextjs](https://github.com/Elvincth/turbo-strapi-nextjs)
